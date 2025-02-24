@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import Converter from './Converter';
 import * as api from '../api/romanNumeral';
 
-// Mock API 请求
+// Mock API request
 jest.mock('../api/romanNumeral');
 
 describe('Converter Component', () => {
@@ -34,7 +34,7 @@ describe('Converter Component', () => {
   });
 
   test('calls getRomanNumeral and displays output on success', async () => {
-    // Mock 成功返回
+    // Mock success response
     (api.getRomanNumeral as jest.Mock).mockResolvedValueOnce({ output: 'XII' });
 
     render(<Converter />);
@@ -52,7 +52,7 @@ describe('Converter Component', () => {
   });
 
   test('displays error message on API failure', async () => {
-    // Mock 失败返回
+    // Mock failure response
     (api.getRomanNumeral as jest.Mock).mockRejectedValueOnce(new Error('Invalid input, please enter an integer between 1 and 3999'));
 
     render(<Converter />);

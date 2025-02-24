@@ -30,9 +30,13 @@ const Converter: React.FC = () => {
   }
 
   return (
-    <View padding="size-300" maxWidth="size-4600" data-testid="converter">
+    <View
+      paddingX="size-300"
+      paddingBottom="size-600"
+      maxWidth="size-4600"
+      data-testid="converter"
+    >
       <Heading level={1}>Roman numeral converter</Heading>
-
       <TextField
         label="Enter a number"
         value={input}
@@ -45,12 +49,12 @@ const Converter: React.FC = () => {
       />
 
       <Button
-        width="size-2600" 
-        min-width="size-2600" 
-        variant="cta" 
-        onPress={handleConvert} 
+        width="size-2600"
+        min-width="size-2600"
+        variant="cta"
+        onPress={handleConvert}
         marginTop="size-200"
-        isDisabled={!isValidInput || isLoading}  // disable when invalid input or loading
+        isDisabled={!isValidInput || isLoading} // disable when invalid input or loading
       >
         {isLoading ? 'Converting...' : 'Convert to roman numeral'}
       </Button>

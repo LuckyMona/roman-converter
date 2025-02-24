@@ -1,2 +1,23 @@
-node_modules
-build
+# Node.js dependencies and build files
+node_modules/
+dist/
+build/
+
+# Docker persistent data directories
+grafana-data/
+prometheus-data/
+
+# Log files
+backend/logs/
+
+# Docker temporary files and configuration
+docker-compose.override.yml
+docker-compose.prod.yml
+*.env
+
+# System and editor files
+.DS_Store
+*.swp
+Thumbs.db
+.vscode/
+.idea/

@@ -4,4 +4,4 @@ global:
 scrape_configs:
   - job_name: 'node_app'
     static_configs:
-      - targets: ['backend:5000']
+      - targets: ['backend:8080']

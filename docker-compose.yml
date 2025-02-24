@@ -25,6 +25,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    volumes:
+      - ./backend/logs:/usr/src/app/logs
     networks:
       - app-network
 
