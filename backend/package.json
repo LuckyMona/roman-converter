@@ -7,7 +7,7 @@
     "start": "ts-node src/index.ts",
     "dev": "ts-node src/index.ts --transpile-only",
     "build": "tsc",
-    "test": "jest"
+    "test": "jest test --coverage --watchAll"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -19,6 +19,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.15",
+    "@types/express-rate-limit": "^6.0.2",
     "@types/jest": "^29.5.14",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.13.5",

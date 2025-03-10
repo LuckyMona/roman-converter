@@ -21,3 +21,5 @@ docker-compose.prod.yml
 Thumbs.db
 .vscode/
 .idea/
+
+coverage

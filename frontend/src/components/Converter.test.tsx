@@ -1,71 +1,91 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import Converter from './Converter';
-import * as api from '../api/romanNumeral';
+/* eslint-disable testing-library/no-wait-for-multiple-assertions */
+import React from 'react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import '@testing-library/jest-dom'
+import Converter from './Converter'
+import * as api from '../api/romanNumeral'
 
 // Mock API request
-jest.mock('../api/romanNumeral');
+jest.mock('../api/romanNumeral')
 
 describe('Converter Component', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-  });
+    jest.clearAllMocks()
+  })
 
   test('renders correctly', () => {
-    render(<Converter />);
-    expect(screen.getByText(/Roman numeral converter/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Enter a number/i)).toBeInTheDocument();
-    expect(screen.getByText(/Convert to roman numeral/i)).toBeInTheDocument();
-  });
+    render(<Converter />)
+    expect(screen.getByText(/Roman numeral converter/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/Enter a number/i)).toBeInTheDocument()
+    expect(screen.getByText(/Convert to roman numeral/i)).toBeInTheDocument()
+  })
 
   test('accepts input value and updates state', () => {
-    render(<Converter />);
-    const input = screen.getByLabelText(/Enter a number/i);
-    fireEvent.change(input, { target: { value: '123' } });
-    expect(input).toHaveValue(123);
-  });
+    render(<Converter />)
+    const input = screen.getByLabelText(/Enter a number/i)
+    fireEvent.change(input, { target: { value: '123' } })
+    expect(input).toHaveValue('123')
+  })
 
   test('shows error message for invalid input', () => {
-    render(<Converter />);
-    const input = screen.getByLabelText(/Enter a number/i);
-    fireEvent.change(input, { target: { value: '5000' } });
-    expect(screen.getByText(/Invalid input. Please enter a number between 1 and 3999./i)).toBeInTheDocument();
-  });
+    render(<Converter />)
+    const input = screen.getByLabelText(/Enter a number/i)
+    fireEvent.change(input, { target: { value: '5000' } })
+    expect(screen.getByText(/Invalid input. Please enter a number between 1 and 3999./i)).toBeInTheDocument()
+  })
 
   test('calls getRomanNumeral and displays output on success', async () => {
     // Mock success response
-    (api.getRomanNumeral as jest.Mock).mockResolvedValueOnce({ output: 'XII' });
+    ;(api.getRomanNumeral as jest.Mock).mockResolvedValueOnce({ output: 'XII' })
 
-    render(<Converter />);
-    const input = screen.getByLabelText(/Enter a number/i);
-    const button = screen.getByText(/Convert to roman numeral/i);
+    render(<Converter />)
+    const input = screen.getByLabelText(/Enter a number/i)
+    const button = screen.getByText(/Convert to roman numeral/i)
 
-    fireEvent.change(input, { target: { value: '12' } });
-    fireEvent.click(button);
+    fireEvent.change(input, { target: { value: '12' } })
+    fireEvent.click(button)
 
     await waitFor(() => {
-      expect(screen.getByText(/Roman numeral:/i)).toBeInTheDocument();
-      // eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
-      expect(screen.getByText(/XII/i)).toBeInTheDocument();
-    });
-  });
+      expect(screen.getByText(/Roman numeral:/i)).toBeInTheDocument()
+      expect(screen.getByText(/XII/i)).toBeInTheDocument()
+    })
+  })
+
+  test('shows loading indicator while converting', async () => {
+    ;(api.getRomanNumeral as jest.Mock).mockResolvedValueOnce({ output: 'XX' })
+
+    render(<Converter />)
+    const input = screen.getByLabelText(/Enter a number/i)
+    const button = screen.getByText(/Convert to roman numeral/i)
+
+    fireEvent.change(input, { target: { value: '20' } })
+    fireEvent.click(button)
+
+    // Loading indicator should be displayed
+    expect(screen.getByLabelText(/Loading/i)).toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(screen.queryByLabelText(/Loading/i)).not.toBeInTheDocument()
+      expect(screen.getByText(/XX/i)).toBeInTheDocument()
+    })
+    
+  })
 
   test('displays error message on API failure', async () => {
     // Mock failure response
-    (api.getRomanNumeral as jest.Mock).mockRejectedValueOnce(new Error('Invalid input, please enter an integer between 1 and 3999'));
+    ;(api.getRomanNumeral as jest.Mock).mockRejectedValueOnce(new Error('Invalid input, please enter an integer between 1 and 3999'))
 
-    render(<Converter />);
-    const input = screen.getByLabelText(/Enter a number/i);
-    const button = screen.getByText(/Convert to roman numeral/i);
+    render(<Converter />)
+    const input = screen.getByLabelText(/Enter a number/i)
+    const button = screen.getByText(/Convert to roman numeral/i)
 
-    fireEvent.change(input, { target: { value: '12' } });
-    fireEvent.click(button);
+    fireEvent.change(input, { target: { value: '12' } })
+    fireEvent.click(button)
 
     await waitFor(() => {
-      expect(screen.getByText(/Error:/i)).toBeInTheDocument();
-      // eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
-      expect(screen.getByText(/Invalid input, please enter an integer between 1 and 3999/i)).toBeInTheDocument();
-    });
-  });
-});
+      expect(screen.getByText(/Error:/i)).toBeInTheDocument()
+      expect(screen.getByText(/Invalid input, please enter an integer between 1 and 3999/i)).toBeInTheDocument()
+    })
+  })
+
+})

@@ -27,9 +27,9 @@ describe('getRomanNumeral', () => {
     // Mock return 400 code
     mockFetch.mockResolvedValueOnce({
       ok: false,
-      status: 400
+      status: 400,
+      json: async () => ({ error: 'Invalid input, please enter an integer between 1 and 3999' })
     } as Response);
-
     await expect(getRomanNumeral('0')).rejects.toThrow('Invalid input, please enter an integer between 1 and 3999');
   });
 
@@ -37,16 +37,44 @@ describe('getRomanNumeral', () => {
     // Mock return 500 code
     mockFetch.mockResolvedValueOnce({
       ok: false,
-      status: 500
+      status: 500,
+      json: async () => ({ error: 'Server error, please try again later' })
     } as Response);
-
     await expect(getRomanNumeral('123')).rejects.toThrow('Server error, please try again later');
   });
 
   test('network error - throw Unknown error occurred', async () => {
     // Mock network error
     mockFetch.mockRejectedValueOnce(new Error('Network Error'));
-
     await expect(getRomanNumeral('12')).rejects.toThrow('Network Error');
+  });
+  test('req fail - return 400 Bad Request without error message', async () => {
+    // Mock return 400 with empty JSON
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      json: async () => ({}) // No error message provided
+    } as Response);
+    await expect(getRomanNumeral('0')).rejects.toThrow('Unknown error');
+  });
+  test('JSON parse error - throw Unknown error occurred', async () => {
+    // Mock response.json() throwing an error
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => {
+        throw new Error('Unexpected token in JSON');
+      }
+    } as unknown as Response);
+    await expect(getRomanNumeral('12')).rejects.toThrow('Unexpected token in JSON');
+  });
+  test('JSON parse error - throw Unknown error occurred when error message is empty', async () => {
+    // Mock response.json() throwing an error with an empty message
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => {
+        throw new Error('');
+      }
+    } as unknown as Response);
+    await expect(getRomanNumeral('12')).rejects.toThrow('Unknown error occurred');
   });
 });

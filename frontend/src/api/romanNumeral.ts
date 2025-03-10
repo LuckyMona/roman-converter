@@ -14,19 +14,16 @@ export const getRomanNumeral = async (query: string): Promise<RomanNumeralRespon
       }
     });
 
-    // check HTTP code
+    // when response is bad
     if (!response.ok) {
-      if (response.status === 400) {
-        throw new Error('Invalid input, please enter an integer between 1 and 3999');
-      }
-      throw new Error('Server error, please try again later');
+      const errorData: { error?: string } = await response.json();
+      throw new Error(errorData.error || 'Unknown error');
     }
 
     // convert to JSON object
     const data: RomanNumeralResponse = await response.json();
     return data;
-
   } catch (error: any) {
-    throw new Error(error.message || 'Unknown error occurred');
+    throw new Error(error?.message || 'Unknown error occurred');
   }
 };

@@ -4,11 +4,28 @@ import romanNumeralRouter from './routes/romanNumeral'
 import client from 'prom-client'
 import morgan from 'morgan'
 import winston from 'winston'
+import rateLimit from 'express-rate-limit';
+import errorHandler from './middleware/errorHandler'; 
 
 const app = express()
 
+// Allow Cross-Origin Resource Sharing (CORS), 
+// Should be configured to only allow specific origins in production
 app.use(cors())
 app.use(express.json())
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 10, // 10 requests per minute
+  standardHeaders: true, // Add `RateLimit-*` headers to the response
+  legacyHeaders: false, // Disable legacy `X-RateLimit-*` headers
+  handler: (_, res) => {
+    res.status(429).json({ error: 'Rate Limit: Too many requests, please try again later' });
+  },
+});
+
+app.use(limiter);
 
 // Metrics Setup
 const collectDefaultMetrics = client.collectDefaultMetrics
@@ -59,8 +76,19 @@ const logger = winston.createLogger({
   ]
 })
 
+// Log HTTP requests
 app.use(morgan('combined', { stream: { write: msg => logger.info(msg.trim()) } }))
 
+// Routes
 app.use('/', romanNumeralRouter)
+
+// Error handling 
+app.use((_, res, next) => {
+  const error = new Error('Not Implemented');
+  res.status(501);
+  next(error);
+});
+
+app.use(errorHandler);
 
 export default app

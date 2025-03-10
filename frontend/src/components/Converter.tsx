@@ -9,11 +9,10 @@ const Converter: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   // to validate input
-  const isValidInput = input && Number(input) >= 1 && Number(input) <= 3999
+  const isValidInput = !!input && /^[1-9]\d*$/ig.test(input) &&  Number(input) >= 1 && Number(input) <= 3999
   const validationState = isValidInput ? 'valid' : 'invalid'
 
   const handleConvert = async () => {
-    if (!isValidInput) return
 
     setError('')
     setOutput('')
@@ -41,13 +40,12 @@ const Converter: React.FC = () => {
         label="Enter a number"
         value={input}
         onChange={setInput}
-        type="number"
+        type="text"
         width="size-4600"
         description="Number should be between 1 and 3999"
         errorMessage="Invalid input. Please enter a number between 1 and 3999."
         validationState={input === '' ? undefined : validationState}
       />
-
       <Button
         width="size-2600"
         min-width="size-2600"

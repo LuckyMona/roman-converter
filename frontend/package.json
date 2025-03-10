@@ -23,9 +23,18 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test:watch": "react-scripts test --watch",
-    "test:coverage": "react-scripts test --coverage",
+    "test:coverage": "react-scripts test --coverage --watchAll",
     "test:ci": "react-scripts test --watchAll=false --ci",
     "eject": "react-scripts eject"
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/",
+      "/build/",
+      "src/index.tsx",
+      "src/reportWebVitals.ts"
+    ]
   },
   "eslintConfig": {
     "extends": [
